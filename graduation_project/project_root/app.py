@@ -110,7 +110,7 @@ class SecurityAnalysisResult:
     raw_response: Optional[str] = None
 
 class OpenAIAssistantAnalyzer:
-    def __init__(self, api_key: str, assistant_id: str = "asst_2ZsSx8Cvn6k7HX6zZXemEwqK"):  # Updated default ID
+    def __init__(self, api_key: str, assistant_id: str = "api_key"):  # Updated default ID
         self.client = OpenAI(api_key=api_key)
         self.assistant_id = assistant_id
         self.logger = logging.getLogger(__name__)
@@ -549,7 +549,7 @@ class Config:
     if not OPENAI_API_KEY:
         raise ValueError("OPENAI_API_KEY environment variable is not set. Check your .env file.")
     
-    OPENAI_ASSISTANT_ID = os.getenv('OPENAI_ASSISTANT_ID', 'asst_Du28dWxzx3TU5XQuHyTh2fsl')
+    OPENAI_ASSISTANT_ID = os.getenv('OPENAI_ASSISTANT_ID', 'OPENAI_API_KEY')
     OPENAI_MODEL = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
     
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{BASE_DIR}/instance/vapt.db'
@@ -558,7 +558,7 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'txt', 'pdf'}
     WTF_CSRF_ENABLED = False
-    GOOGLE_CREDENTIALS = str(BASE_DIR / '/Users/sa/Desktop/VARA/avian-sandbox-424508-u3-2dd8eff25585.json')
+    GOOGLE_CREDENTIALS = str(BASE_DIR / '/Users/sa/Desktop/VARA/avian-sandbox.json')
 
 # Initialize Security Analyzer with proper error handling
 def init_security_analyzer():
@@ -569,7 +569,7 @@ def init_security_analyzer():
             
         return OpenAIAssistantAnalyzer(
             api_key=api_key,
-            assistant_id=os.getenv('OPENAI_ASSISTANT_ID', 'asst_WTECGEGWiy8gpyZnlPRAlVT2')
+            assistant_id=os.getenv('OPENAI_ASSISTANT_ID', 'api_key')
         )
     except Exception as e:
         logger.error(f"Failed to initialize OpenAI Assistant: {str(e)}")
@@ -2239,7 +2239,7 @@ def calculate_compliance_metrics(analysis) -> Dict:
         return {}
 
 class ReportGenerationAssistant:
-    def __init__(self, api_key: str, assistant_id: str = "asst_2ZsSx8Cvn6k7HX6zZXemEwqK"):  # Updated default ID
+    def __init__(self, api_key: str, assistant_id: str = "(api_key"):  # Updated default ID
         self.client = OpenAI(api_key=api_key)
         self.assistant_id = assistant_id
         self.logger = logging.getLogger(__name__)
