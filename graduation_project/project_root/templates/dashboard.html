@@ -1,0 +1,1253 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="flex h-screen bg-[#0A0A0A]">
+    <!-- Sidebar -->
+    <div class="w-72 bg-[#141414] border-r border-[#2a2a2a]">
+        <div class="flex flex-col h-full">
+            <div class="p-5 border-b border-[#2a2a2a]">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <svg class="w-6 h-6 text-cyan-500 transform transition-transform hover:scale-105" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                        <div class="absolute inset-0 bg-cyan-500 opacity-20 blur-xl rounded-full"></div>
+                    </div>
+                    <span class="text-lg font-semibold text-white tracking-wide">VARA</span>
+                </div>
+            </div>
+
+            <!-- Recent Sessions -->
+            <div class="flex-1 overflow-y-auto p-5">
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-gray-400">Recent Sessions</span>
+                        <span class="text-xs text-cyan-500 hover:text-cyan-400 cursor-pointer">View All</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        {% for session in recent_sessions %}
+                            {% if session.analyses and session.analyses[0] and not loop.previtem or session.id != loop.previtem.id %}
+                            <div class="bg-[#1A1A1A] hover:bg-[#1F1F1F] rounded-xl transition-all duration-200 cursor-pointer border border-transparent hover:border-zinc-800" 
+                                 onclick="handleSessionClick('{{ session.id }}')">
+                                <div class="p-4">
+                                    <!-- Header -->
+                                    <div class="flex items-center justify-between mb-3 pb-3 border-b border-zinc-800/50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M6 11h12M6 15h12M6 19h12" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm font-medium {% if session.company_name %}text-cyan-500{% else %}text-gray-500 italic{% endif %}">
+                                                    {{ session.company_name or 'Unnamed Company' }}
+                                                </span>
+                                                <div class="text-xs text-gray-500">{{ session.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-gray-300">{{ session.analyses[0].vulnerability_type }}</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                                                {% if session.analyses[0].severity == 'Critical' %} text-red-500 bg-red-500/10
+                                                {% elif session.analyses[0].severity == 'High' %} text-orange-500 bg-orange-500/10
+                                                {% elif session.analyses[0].severity == 'Medium' %} text-yellow-500 bg-yellow-500/10
+                                                {% else %} text-green-500 bg-green-500/10
+                                                {% endif %}">
+                                                {{ session.analyses[0].severity }}
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="flex items-center gap-2 pt-2">
+                                            <button class="flex-1 px-3 py-1.5 text-xs font-medium text-cyan-500 bg-cyan-500/10 hover:bg-cyan-500/20 rounded-lg transition-colors">
+                                                View Details
+                                            </button>
+                                            <button class="flex-1 px-3 py-1.5 text-xs font-medium text-gray-400 bg-zinc-800/50 hover:bg-zinc-800 rounded-lg transition-colors">
+                                                Download Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Top Navigation -->
+        <div class="bg-[#141414] border-[#2a2a2a] px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Left Section -->
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <svg class="w-7 h-7 text-cyan-500 transform transition-transform hover:scale-105" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                        <div class="absolute inset-0 bg-cyan-500 opacity-20 blur-xl rounded-full"></div>
+                    </div>
+                    <span class="text-xl font-semibold text-white tracking-wide">AI-Powered Analysis</span>
+                </div>
+
+                <!-- Center Section -->
+                <a href="{{ url_for('analytics_dashboard') }}" 
+                   class="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 hover:text-white transition-all duration-200">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20V10M18 20V4M6 20v-4" />
+                    </svg>
+                    <span class="font-medium">Analytics Dashboard</span>
+                </a>
+
+                <!-- Right Section -->
+                <div class="flex items-center gap-6">
+                    <!-- Company Selector -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-400">Current Company:</span>
+                        <div class="flex items-center gap-2 px-3 py-1.5 bg-zinc-800/50 rounded-lg">
+                            <span id="currentCompanyDisplay" class="text-cyan-500 font-medium">-</span>
+                            <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="h-6 w-px bg-zinc-700"></div>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                                <span class="text-cyan-500 font-semibold">{{ current_user.username[0]|upper }}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-white">{{ current_user.username }}</span>
+                                <span class="text-xs text-gray-400">Security Analyst</span>
+                            </div>
+                        </div>
+
+                        <!-- Logout Button -->
+                        <a href="{{ url_for('logout') }}" 
+                           class="flex items-center gap-2 px-4 py-2 rounded-lg text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            <span class="font-medium">Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 p-8 bg-[#0A0A0A] overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+                <!-- Main Content Card -->
+                <div class="bg-[#141414] rounded-2xl shadow-xl">
+                    <div class="p-8">
+                        <h2 class="text-2xl font-semibold text-white mb-8">Upload Files for Analysis</h2>
+
+                        <!-- Organization Input -->
+<!-- Company Name Input -->
+                        <div class="mb-6">
+                            <input
+                                type="text"
+                                id="companyName"
+                                name="companyName"
+                                class="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                                placeholder="Enter Scope Organization Name"
+                            />
+                        </div>
+                        <!-- Upload Area -->
+                        <div id="dropZone" class="border-2 border-dashed border-zinc-800 hover:border-cyan-500 rounded-xl transition-all duration-200 cursor-pointer relative">
+                            <input type="file" 
+                                   id="fileInput" 
+                                   name="files[]"
+                                   multiple 
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                                   accept="image/*,.txt">
+                            <input type="file" 
+                                   id="fileInput" 
+                                   multiple 
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                   accept="image/*,.txt">
+                            <div class="p-8">
+                                <div class="flex flex-col items-center justify-center text-center">
+                                    <div class="w-16 h-16 mb-4 rounded-2xl bg-cyan-500/10 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-white mb-2">Click to upload multiple files or drag and drop</h3>
+                                    <p class="text-sm text-gray-400">Supports images and text files</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Alert -->
+                        <div id="errorAlert" class="hidden mt-4 bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <span id="errorMessage" class="text-red-500 text-sm"></span>
+                            </div>
+                        </div>
+
+                        <!-- Loading State (Hidden by default) -->
+                        <div id="loadingState" class="hidden mt-6">
+                            <div class="bg-[#1A1A1A] rounded-lg p-6">
+                                <div class="flex items-center justify-center gap-3">
+                                    <div class="w-4 h-4 bg-cyan-500 rounded-full animate-pulse"></div>
+                                    <span class="text-cyan-500 font-medium">Analyzing vulnerabilities...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Result (Hidden by default) -->
+                        <div id="analysisResult" class="hidden mt-8 space-y-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+// Global variables
+let currentSessionId = null;
+
+// ----------------
+// Utility Functions
+// ----------------
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight(e) {
+    const dropZone = document.getElementById('dropZone');
+    if (dropZone) {
+        dropZone.classList.add('border-cyan-500', 'bg-cyan-500/5');
+    }
+}
+
+function unhighlight(e) {
+    const dropZone = document.getElementById('dropZone');
+    if (dropZone) {
+        dropZone.classList.remove('border-cyan-500', 'bg-cyan-500/5');
+    }
+}
+
+function showError(message) {
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorAlert && errorMessage) {
+        errorMessage.textContent = message;
+        errorAlert.classList.remove('hidden');
+    }
+}
+
+function hideError() {
+    const errorAlert = document.getElementById('errorAlert');
+    if (errorAlert) {
+        errorAlert.classList.add('hidden');
+    }
+}
+
+function validateCompanyName() {
+    const companyNameInput = document.getElementById('companyName');
+    if (!companyNameInput) {
+        console.error('Company name input not found');
+        return false;
+    }
+
+    const companyName = companyNameInput.value.trim();
+    console.log('Company name:', companyName); // Debug log
+
+    if (!companyName) {
+        showError('Please enter a company name');
+        companyNameInput.classList.add('border-red-500');
+        return false;
+    }
+
+    companyNameInput.classList.remove('border-red-500');
+    return true;
+}
+
+function showLoadingState() {
+    const loadingState = document.getElementById('loadingState');
+    if (loadingState) {
+        loadingState.classList.remove('hidden');
+    }
+}
+
+function hideLoadingState() {
+    const loadingState = document.getElementById('loadingState');
+    if (loadingState) {
+        loadingState.classList.add('hidden');
+    }
+}
+
+// File Upload Functions
+async function uploadFiles(files) {
+    console.log('Starting file upload process');
+    
+    if (!files || files.length === 0) {
+        showError('Please select files to upload');
+        return;
+    }
+
+    // Validate company name first
+    if (!validateCompanyName()) {
+        return;
+    }
+
+    const companyName = document.getElementById('companyName').value.trim();
+    console.log('Uploading files for company:', companyName);
+
+    // Show loading state and hide error
+    showLoadingState();
+    hideError();
+
+    // Create FormData
+    const formData = new FormData();
+    
+    // Add files
+    Array.from(files).forEach(file => {
+        formData.append('files[]', file);
+        console.log('Adding file:', file.name);
+    });
+    
+    // Add company name
+    formData.append('company_name', companyName);
+
+    try {
+        console.log('Sending request to server');
+        const response = await fetch('/upload_image', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.success) {
+            // Update UI with results
+            currentSessionId = data.session_id;
+            updateUIWithResults(data);
+        } else {
+            throw new Error(data.error || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showError(error.message || 'An error occurred during upload');
+    } finally {
+        hideLoadingState();
+    }
+}
+
+function updateUIWithResults(data) {
+    // Update company display
+    const companyDisplay = document.getElementById('currentCompanyDisplay');
+    if (companyDisplay) {
+        companyDisplay.textContent = data.company_name || '-';
+    }
+
+    // Update analysis results
+    if (data.analysis) {
+        const analysisResult = document.getElementById('analysisResult');
+        if (analysisResult) {
+            analysisResult.innerHTML = generateAnalysisHTML(data.analysis);
+            analysisResult.classList.remove('hidden');
+        }
+    }
+
+    // Add to recent sessions
+    addNewSessionToList(data);
+}
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    const loadingState = document.getElementById('loadingState');
+    const analysisResult = document.getElementById('analysisResult');
+    const companyNameInput = document.getElementById('companyName');
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorAlert.classList.remove('hidden');
+    }
+
+    function hideError() {
+        errorAlert.classList.add('hidden');
+    }
+
+    function showLoading() {
+        loadingState.classList.remove('hidden');
+    }
+
+    function hideLoading() {
+        loadingState.classList.add('hidden');
+    }
+
+    function highlight() {
+        dropZone.classList.add('border-cyan-500', 'bg-cyan-500/5');
+    }
+
+    function unhighlight() {
+        dropZone.classList.remove('border-cyan-500', 'bg-cyan-500/5');
+    }
+
+    function processFiles(files) {
+    const companyName = companyNameInput.value.trim();
+    
+    if (!companyName) {
+        showError('Please enter a Scope Organization Name');
+        return;
+    }
+
+    if (!files || files.length === 0) {
+        showError('Please select at least one file');
+        return;
+    }
+
+    hideError();
+    showLoading();
+
+    const formData = new FormData();
+    formData.append('company_name', companyName);
+    
+    Array.from(files).forEach(file => {
+        formData.append('files[]', file);
+    });
+
+        // Send request to server
+        fetch('/upload_image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        
+        if (data.error) {
+            showError(data.error);
+        } else if (data.success) {
+            // Set the current session ID
+            currentSessionId = data.session_id;
+            console.log('Setting current session ID:', currentSessionId);
+            
+            // Update current company display
+            document.getElementById('currentCompanyDisplay').textContent = data.company_name;
+            
+            // Show analysis results
+            const analysisHTML = generateAnalysisHTML(data.analysis, data.session_id);
+            analysisResult.innerHTML = analysisHTML;
+            analysisResult.classList.remove('hidden');
+            
+            // Update session list
+            addNewSessionToList(data);
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        console.error('Upload error:', error);
+        showError('An error occurred during upload. Please try again.');
+    });
+}
+
+
+    // Handle drag and drop
+    dropZone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        highlight();
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        highlight();
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        unhighlight();
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        unhighlight();
+        const files = e.dataTransfer.files;
+        processFiles(files);
+    });
+
+    // Handle click upload
+    dropZone.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = 'image/*,.txt,.pdf';
+        
+        input.onchange = (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                processFiles(e.target.files);
+            }
+        };
+        
+        input.click();
+    });
+
+    // Handle company name input
+    companyNameInput.addEventListener('input', hideError);
+});
+
+function generateAnalysisHTML(analysis) {
+    const severityClass = {
+        'Critical': 'text-red-500 bg-red-500/10',
+        'High': 'text-orange-500 bg-orange-500/10',
+        'Medium': 'text-yellow-500 bg-yellow-500/10',
+        'Low': 'text-green-500 bg-green-500/10'
+    }[analysis.severity] || 'text-gray-500 bg-gray-500/10';
+
+    return `
+        <div class="space-y-6">
+            <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-white">Analysis Results</h3>
+                    <span class="px-2 py-1 rounded text-xs ${severityClass}">
+                        ${analysis.severity}
+                    </span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-gray-400 text-sm">Vulnerability Type:</span>
+                        <p class="text-white mt-1">${analysis.vulnerability_type}</p>
+                    </div>
+
+                    <div>
+                        <span class="text-gray-400 text-sm">Impact:</span>
+                        <p class="text-white mt-1">${analysis.impact}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#141414] p-4 rounded-lg">
+                            <span class="text-gray-400 text-sm">Confidence:</span>
+                            <p class="text-lg font-medium text-cyan-500 mt-1">
+                                ${(analysis.confidence * 100).toFixed(1)}%
+                            </p>
+                        </div>
+                        <div class="bg-[#141414] p-4 rounded-lg">
+                            <span class="text-gray-400 text-sm">CVSS Score:</span>
+                            <p class="text-lg font-medium text-cyan-500 mt-1">
+                                ${analysis.cvss_score.toFixed(1)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${analysis.recommendations ? `
+                <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                    <h4 class="text-lg font-medium text-white mb-4">Recommendations</h4>
+                    <ul class="space-y-3">
+                        ${analysis.recommendations.map(rec => `
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-300">${rec}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+function getSeverityClass(severity) {
+    const classes = {
+        'Critical': 'text-red-500 bg-red-500/10',
+        'High': 'text-orange-500 bg-orange-500/10',
+        'Medium': 'text-yellow-500 bg-yellow-500/10',
+        'Low': 'text-green-500 bg-green-500/10'
+    };
+    return classes[severity] || 'text-gray-500 bg-gray-500/10';
+}
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing...');
+    
+    // Initialize dropzone
+    const dropZone = document.getElementById('dropZone');
+    if (dropZone) {
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Handle drag events
+        dropZone.addEventListener('dragenter', highlight, false);
+        dropZone.addEventListener('dragover', highlight, false);
+        dropZone.addEventListener('dragleave', unhighlight, false);
+        dropZone.addEventListener('drop', (e) => {
+            unhighlight(e);
+            const files = e.dataTransfer.files;
+            uploadFiles(files);
+        }, false);
+
+        // Handle click to upload
+        dropZone.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = 'image/*,.txt,.pdf';
+            input.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    uploadFiles(e.target.files);
+                }
+            });
+            input.click();
+        });
+    }
+
+    // Initialize company name input
+    const companyNameInput = document.getElementById('companyName');
+    if (companyNameInput) {
+        companyNameInput.addEventListener('input', hideError);
+    }
+});
+
+function showLoadingState() {
+    const loadingState = document.getElementById('loadingState');
+    if (loadingState) {
+        loadingState.classList.remove('hidden');
+    }
+}
+
+function hideLoadingState() {
+    const loadingState = document.getElementById('loadingState');
+    if (loadingState) {
+        loadingState.classList.add('hidden');
+    }
+}
+
+function hideAnalysisResult() {
+    const analysisResult = document.getElementById('analysisResult');
+    if (analysisResult) {
+        analysisResult.classList.add('hidden');
+    }
+}
+
+function getSeverityClass(severity) {
+    const classes = {
+        'Critical': 'text-red-500 bg-red-500/10',
+        'High': 'text-orange-500 bg-orange-500/10',
+        'Medium': 'text-yellow-500 bg-yellow-500/10',
+        'Low': 'text-green-500 bg-green-500/10'
+    };
+    return classes[severity] || 'text-gray-500 bg-gray-500/10';
+}
+
+// ----------------
+// File Handling
+// ----------------
+function handleDrop(e) {
+    preventDefaults(e);
+    unhighlight(e);
+
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (!validateCompanyName()) {
+        return;
+    }
+
+    handleFiles(files);
+}
+
+function validateFileType(file) {
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+        showError(`File type not allowed: ${file.name}`);
+        return false;
+    }
+    return true;
+}
+
+function validateFileSize(file) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+        showError(`File too large: ${file.name}. Maximum size is 10MB.`);
+        return false;
+    }
+    return true;
+}
+
+function validateCompanyName() {
+    const companyNameInput = document.getElementById('companyName');
+    if (!companyNameInput) return true;
+
+    const companyName = companyNameInput.value.trim();
+    if (!companyName) {
+        companyNameInput.classList.add('border-red-500');
+        showError('Please enter a Scope Organization Name');
+        return false;
+    }
+
+    companyNameInput.classList.remove('border-red-500');
+    hideError();
+    return true;
+}
+
+async function handleFiles(files) {
+    if (!files.length) return;
+
+    // Validate company name
+    if (!validateCompanyName()) return;
+
+    const formData = new FormData();
+    let hasValidFiles = false;
+
+    // Add files to formData
+    Array.from(files).forEach(file => {
+        if (validateFileType(file) && validateFileSize(file)) {
+            formData.append('files[]', file);
+            hasValidFiles = true;
+        }
+    });
+
+    if (!hasValidFiles) {
+        showError('Please upload valid files (images or text files)');
+        return;
+    }
+
+    // Add company name
+    const companyName = document.getElementById('companyName').value.trim();
+    formData.append('company_name', companyName);
+
+    // Update UI states
+    hideError();
+    showLoadingState();
+    hideAnalysisResult();
+
+    try {
+        const response = await fetch('/upload_image', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            currentSessionId = data.session_id;
+            document.getElementById('currentCompanyDisplay').textContent = companyName;
+            updateUIForAnalysis(data.analysis);
+            addNewSessionToList(data);
+            showSuccess('Files uploaded successfully');
+        } else {
+            throw new Error(data.error || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showError(error.message || 'Upload failed. Please try again.');
+    } finally {
+        hideLoadingState();
+    }
+}
+
+// ----------------
+// UI Updates
+// ----------------
+function updateUIForAnalysis(analysis) {
+    if (!analysis) return;
+
+    const analysisResult = document.getElementById('analysisResult');
+    if (!analysisResult) return;
+
+    const resultHtml = generateAnalysisHTML(analysis);
+    analysisResult.innerHTML = resultHtml;
+    analysisResult.classList.remove('hidden');
+}
+
+function generateAnalysisHTML(analysis, sessionId) {
+    const severityClass = {
+        'Critical': 'text-red-500 bg-red-500/10',
+        'High': 'text-orange-500 bg-orange-500/10',
+        'Medium': 'text-yellow-500 bg-yellow-500/10',
+        'Low': 'text-green-500 bg-green-500/10'
+    }[analysis.severity] || 'text-gray-500 bg-gray-500/10';
+
+    return `
+        <div class="space-y-6">
+            <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-white">Analysis Results</h3>
+                    <span class="px-2 py-1 rounded text-xs ${severityClass}">
+                        ${analysis.severity}
+                    </span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-gray-400 text-sm">Vulnerability Type:</span>
+                        <p class="text-white mt-1">${analysis.vulnerability_type}</p>
+                    </div>
+
+                    <div>
+                        <span class="text-gray-400 text-sm">Impact:</span>
+                        <p class="text-white mt-1">${analysis.impact}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#141414] p-4 rounded-lg">
+                            <span class="text-gray-400 text-sm">Confidence:</span>
+                            <p class="text-lg font-medium text-cyan-500 mt-1">
+                                ${(analysis.confidence * 100).toFixed(1)}%
+                            </p>
+                        </div>
+                        <div class="bg-[#141414] p-4 rounded-lg">
+                            <span class="text-gray-400 text-sm">CVSS Score:</span>
+                            <p class="text-lg font-medium text-cyan-500 mt-1">
+                                ${analysis.cvss_score.toFixed(1)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            ${analysis.recommendations ? `
+                <div class="bg-[#1a1a1a] p-6 rounded-lg">
+                    <h4 class="text-lg font-medium text-white mb-4">Recommendations</h4>
+                    <ul class="space-y-3">
+                        ${analysis.recommendations.map(rec => `
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-cyan-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-300">${rec}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            <!-- Add Download Report Button -->
+            <div class="flex justify-end mt-6">
+                <button onclick="downloadReport('${sessionId}')" 
+                        class="download-report-button flex items-center gap-2 px-4 py-2 text-cyan-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download VAPT Report
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+
+// ----------------
+// Session Management
+// ----------------
+function handleSessionClick(sessionId) {
+    fetch(`/api/session/${sessionId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update displayed company
+                document.getElementById('currentCompanyDisplay').textContent = data.company_name;
+                
+                // Update analysis display
+                const analysisResult = document.getElementById('analysisResult');
+                analysisResult.innerHTML = generateAnalysisHTML(data.analysis);
+                analysisResult.classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Failed to load session data');
+        });
+}
+
+function addNewSessionToList(data) {
+    const sessionsList = document.querySelector('.space-y-3');
+    if (!sessionsList) return;
+
+    const newSession = document.createElement('div');
+    newSession.className = 'bg-[#1A1A1A] p-4 rounded-xl hover:bg-[#1F1F1F] transition-all duration-200 cursor-pointer border border-transparent hover:border-zinc-800';
+    newSession.onclick = () => handleSessionClick(data.session_id);
+    
+    const severityClass = {
+        'Critical': 'text-red-500 bg-red-500/10',
+        'High': 'text-orange-500 bg-orange-500/10',
+        'Medium': 'text-yellow-500 bg-yellow-500/10',
+        'Low': 'text-green-500 bg-green-500/10'
+    }[data.analysis.severity] || 'text-gray-500 bg-gray-500/10';
+
+    newSession.innerHTML = `
+        <div class="flex items-center justify-between mb-3 pb-3 border-b border-zinc-800/50">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M6 11h12M6 15h12M6 19h12" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-sm font-medium text-cyan-500">${data.company_name}</span>
+                    <div class="text-xs text-gray-500">${new Date().toLocaleString()}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-300">${data.analysis.vulnerability_type}</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium ${severityClass}">
+                ${data.analysis.severity}
+            </span>
+        </div>
+
+        <div class="flex justify-end mt-3">
+            <button onclick="event.stopPropagation(); downloadReport('${data.session_id}')" 
+                    class="text-sm text-cyan-500 hover:text-cyan-400">
+                Download Report
+            </button>
+        </div>
+    `;
+
+    sessionsList.insertBefore(newSession, sessionsList.firstChild);
+}
+
+function handleSessionClick(sessionId) {
+    fetch(`/api/session/${sessionId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Set current session ID
+                currentSessionId = sessionId;
+                console.log('Setting current session ID from click:', currentSessionId);
+                
+                // Update displayed company
+                document.getElementById('currentCompanyDisplay').textContent = data.company_name;
+                
+                // Update analysis display
+                const analysisResult = document.getElementById('analysisResult');
+                analysisResult.innerHTML = generateAnalysisHTML(data.analysis, sessionId);
+                analysisResult.classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Failed to load session data');
+        });
+}
+
+function downloadReport(sessionId) {
+    if (!sessionId) {
+        console.error('No session ID provided for download');
+        showError('Unable to download report: No session selected');
+        return;
+    }
+
+    console.log('Downloading report for session:', sessionId);
+    
+    // Show loading state on button
+    const downloadButton = document.querySelector('.download-report-button');
+    if (downloadButton) {
+        const originalContent = downloadButton.innerHTML;
+        downloadButton.innerHTML = `
+            <div class="flex items-center gap-2">
+                <svg class="animate-spin h-5 w-5 text-cyan-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generating Report...</span>
+            </div>
+        `;
+        downloadButton.disabled = true;
+    }
+
+    // Initiate download
+    window.location.href = `/api/report/${sessionId}`;
+
+    // Reset button after a short delay
+    setTimeout(() => {
+        if (downloadButton) {
+            downloadButton.disabled = false;
+            downloadButton.innerHTML = originalContent;
+        }
+    }, 2000);
+}
+async function generateReport(sessionId) {
+    try {
+        // Show loading state
+        const loadingToast = showToast('Generating report...', 'loading');
+        
+        const response = await fetch(`/api/report/${sessionId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/pdf'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.details || 'Failed to generate report');
+        }
+
+        // Check if we got a PDF
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/pdf')) {
+            // Success case - handle PDF download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = response.headers.get('Content-Disposition')?.split('filename=')[1]?.replace(/"/g, '') || 'security_report.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            // Show success message
+            hideToast(loadingToast);
+            showToast('Report generated successfully!', 'success');
+        } else {
+            // Handle error case
+            const errorData = await response.json();
+            throw new Error(errorData.details || 'Failed to generate PDF');
+        }
+    } catch (error) {
+        console.error('Report generation error:', error);
+        showToast(`Report generation error: ${error.message}`, 'error');
+    }
+}
+
+// Toast notification system
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-y-0
+        ${type === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-500' :
+        type === 'success' ? 'bg-green-500/10 border border-green-500/20 text-green-500' :
+        'bg-cyan-500/10 border border-cyan-500/20 text-cyan-500'}`;
+    
+    const content = document.createElement('div');
+    content.className = 'flex items-center gap-2';
+    
+    // Add appropriate icon based on type
+    const icon = document.createElement('span');
+    icon.innerHTML = type === 'loading' ? 
+        '<div class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>' :
+        type === 'error' ? '⚠️' : '✓';
+    content.appendChild(icon);
+    
+    const text = document.createElement('span');
+    text.textContent = message;
+    content.appendChild(text);
+    
+    toast.appendChild(content);
+    document.body.appendChild(toast);
+    
+    if (type !== 'loading') {
+        setTimeout(() => hideToast(toast), 5000);
+    }
+    
+    return toast;
+}
+
+function hideToast(toast) {
+    if (toast && document.body.contains(toast)) {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => {
+            if (document.body.contains(toast)) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
+    }
+}
+
+function showSuccess(message) {
+    hideError();
+    
+    const successAlert = document.createElement('div');
+    successAlert.className = 'fixed top-4 right-4 z-50 bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-green-500';
+    successAlert.innerHTML = `
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(successAlert);
+    
+    setTimeout(() => {
+        successAlert.remove();
+    }, 3000);
+}
+
+// ----------------
+// Initialization
+// ----------------
+function initializeDropZone() {
+    const dropZone = document.getElementById('dropZone');
+    if (!dropZone) return;
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    dropZone.addEventListener('click', function() {
+        if (!validateCompanyName()) return;
+            
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = '.txt,.jpg,.jpeg,.png,.gif,.pdf';
+        
+        input.onchange = (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        };
+        
+        input.click();
+    });
+}
+
+function initializeCompanyForm() {
+    const companyFormRoot = document.getElementById('company-form-root');
+    if (!companyFormRoot) return;
+
+    companyFormRoot.innerHTML = `
+        <div id="company-form-root" class="mb-6">
+            <label for="companyName" class="block text-sm font-medium text-gray-400 mb-2">
+                Scope Organization Name
+            </label>
+            <input
+                type="text"
+                id="companyName"
+                name="companyName"
+                class="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-colors"
+                placeholder="Enter Scope Organization Name"
+            />
+        </div>
+    `;
+
+    const companyNameInput = document.getElementById('companyName');
+    if (companyNameInput) {
+        companyNameInput.addEventListener('input', () => {
+            companyNameInput.classList.remove('border-red-500');
+            hideError();
+        });
+    }
+}
+
+function setupEventListeners() {
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideError();
+        }
+    });
+
+    document.querySelectorAll('[data-session-id]').forEach(card => {
+        const sessionId = card.getAttribute('data-session-id');
+        if (sessionId) {
+            card.addEventListener('click', () => handleSessionClick(sessionId));
+        }
+    });
+}
+
+// Initialize everything when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDropZone();
+    initializeCompanyForm();
+    setupEventListeners();
+
+    // Error handling
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.error('Error:', {
+            message: msg,
+            url: url,
+            lineNo: lineNo,
+            columnNo: columnNo,
+            error: error
+        });
+        return false;
+    };
+});
+
+// Debounce utility function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Download VAPT report
+function downloadVAPTReport(sessionId) {
+    if (!sessionId) {
+        showError('No session selected');
+        return;
+    }
+    window.location.href = `/api/report/${sessionId}`;
+}
+
+// Handle file select from input
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

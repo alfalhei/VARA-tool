@@ -1,0 +1,57 @@
+<!-- 400.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-black">
+  <div class="max-w-md w-full space-y-8 bg-zinc-900 p-10 rounded-xl shadow-xl">
+    <div class="text-center space-y-6">
+      <div class="w-24 h-24 mx-auto bg-red-500/10 rounded-full flex items-center justify-center">
+        <span class="text-4xl font-bold text-red-500">400</span>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-white">
+        Bad Request
+      </h2>
+      
+      <p class="text-zinc-400">
+        {{ error if error else 'Invalid request. Please try again.' }}
+      </p>
+      
+      <button 
+        onclick="window.history.back()"
+        class="px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+      >
+        Go Back
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- 500.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-black">
+  <div class="max-w-md w-full space-y-8 bg-zinc-900 p-10 rounded-xl shadow-xl">
+    <div class="text-center space-y-6">
+      <div class="w-24 h-24 mx-auto bg-red-500/10 rounded-full flex items-center justify-center">
+        <span class="text-4xl font-bold text-red-500">500</span>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-white">
+        Internal Server Error
+      </h2>
+      
+      <p class="text-zinc-400">
+        {{ error if error else 'Something went wrong. Please try again later.' }}
+      </p>
+      
+      <button 
+        onclick="window.history.back()"
+        class="px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+      >
+        Go Back
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}

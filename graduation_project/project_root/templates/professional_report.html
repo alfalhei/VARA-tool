@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<div class="min-h-screen bg-zinc-900">
+<div class="max-w-7xl mx-auto px-4 py-12 space-y-8">    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Security Assessment Report</title>
+    <style>
+        /* Core Variables */
+        :root {
+            --primary: #0284c7;
+            --critical: #dc2626;
+            --high: #ea580c;
+            --medium: #eab308;
+            --low: #22c55e;
+            --bg-dark: #1e293b;
+            --text-light: #f8fafc;
+            --text-dark: #0f172a;
+            --border: #e2e8f0;
+            --critical: #dc2626;
+            --critical-light: #fee2e2;
+            --critical-dark: #991b1b;
+            
+            --high: #ea580c;
+            --high-light: #ffedd5;
+            --high-dark: #9a3412;
+            
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: #ffffff;
+        }
+
+        /* Page Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-break {
+            break-before: page;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+
+        /* Executive Header */
+        .executive-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            position: relative;
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 5px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .executive-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff' fill-opacity='0.05' d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .shield-logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 1rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            animation: pulse 2s infinite;
+        }
+
+        .shield-outer {
+            fill: rgba(255, 255, 255, 0.1);
+            stroke: rgba(255, 255, 255, 0.8);
+            stroke-width: 1.5;
+        }
+
+        .shield-inner {
+            fill: rgba(255, 255, 255, 0.05);
+            stroke: rgba(255, 255, 255, 0.6);
+            stroke-width: 1;
+        }
+
+        .shield-text {
+            fill: white;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .vara-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+            }
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            }
+        }
+
+        .vara-logo {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .meta-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-icon svg {
+            stroke: rgba(255, 255, 255, 0.8);
+        }
+        .confidential-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(220, 38, 38, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+        }
+
+        .lock-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .report-title-section {
+            margin-top: 1rem;
+        }
+
+        .report-title-section h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .meta-value.highlight {
+            color: #60a5fa;
+        }
+
+        @media (max-width: 768px) {
+            .executive-header {
+                padding: 2rem 0;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            .report-title-section h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .confidential-banner {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--critical);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            padding: 0.75rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Grid Layouts */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <style>
+        /* Cards */
+        .metric-card {
+            background: white;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .metric-card.critical {
+            border-left: 4px solid #dc2626;        }
+
+        .metric-card.high {
+            border-left: 4px solid #ea580c;        }
+
+        .metric-card.medium {
+            border-left: 4px solid #0284c7;
+        }
+        .metric-card.low {
+            border-left: 4px solid #16a34a;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+        }
+        /* Risk Score Display */
+        .risk-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 1.5rem 0;
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Technical Evidence */
+        .code-block {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.critical {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--critical);
+        }
+
+        .status-badge.high {
+            background: rgba(234, 88, 12, 0.1);
+            color: var(--high);
+        }
+
+        /* Lists */
+        .details-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .details-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+    </style>
+</head>
+<!-- Executive Header -->
+<div class="executive-header">
+    <div class="container">
+        <div class="header-content">
+            <!-- VARA Logo and Title -->
+            <div class="header-branding">
+                <div class="vara-logo">
+                    <div class="shield-logo">
+                        <svg class="shield-icon" viewBox="0 0 24 24" fill="none">
+                            <path class="shield-outer" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path class="shield-inner" d="M12 19s6-3 6-7.5V6.8L12 4.5 6 6.8v4.7c0 4.5 6 7.5 6 7.5z"/>
+                            <text x="12" y="13" class="shield-text" text-anchor="middle">V</text>
+                        </svg>
+                    </div>
+                    <div class="vara-text">
+                        <span class="logo-text">VARA</span>
+                        <span class="logo-subtext">AI-Powered Vulnerability Assessment and Penetration Testing Report Generator
+                        </span>
+                    </div>
+                </div>
+                <div class="confidential-banner">
+                    <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0110 0v4"></path>
+                    </svg>
+                    <span>CONFIDENTIAL - SECURITY ASSESSMENT REPORT</span>
+                </div>
+            </div>
+
+            <!-- Report Title and Meta -->
+            <div class="report-title-section">
+                <h1>VAPT Report</h1>
+                <div class="report-meta">
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <path d="M22 6l-10 7L2 6"></path>
+                                </svg>
+                            </div>
+                            <span class="meta-label">Report Reference</span>
+                            <span class="meta-value">VAPT-{{ session.id[:8] }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <span class="meta-label">Assessment Date</span>
+                            <span class="meta-value">{{ session.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <span class="meta-label">Classification</span>
+                            <span class="meta-value highlight">Executive Level</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                                    <path d="M20 7h-7L10 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+                                </svg>
+                            </div>
+                            <span class="meta-label">Assessment Scope</span>
+                            <span class="meta-value highlight">  Enterprise Assessment Overview of the {{ session.company_name if session.company_name else 'Enterprise' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <!-- Executive Summary -->
+    <section>
+        <h2>Executive Risk Overview</h2>
+        <div class="metrics-grid">
+            <!-- Risk Score Card -->
+            <div class="metric-card critical">
+                <h3>Enterprise Risk Score</h3>
+                <div class="risk-score">
+                    {{ "%.1f"|format(risk_metrics.base_score) }}/10
+                </div>
+                <ul class="details-list">
+                    <li><strong>Severity:</strong> {{ analysis.severity }}</li>
+                    <li><strong>Confidence:</strong> {{ "%.0f"|format(analysis.confidence * 100) }}%</li>
+                    <li><strong>Trend:</strong> {{ risk_metrics.trend }}</li>
+                </ul>
+            </div>
+
+            <!-- CVSS Assessment -->
+            <div class="metric-card">
+                <h3>CVSS Assessment</h3>
+                <div class="risk-score" style="color: var(--primary);">
+                    {{ "%.1f"|format(analysis.cvss_score) }}
+                </div>
+                <ul class="details-list">
+                    <li><strong>Vector:</strong> {{ analysis.vulnerability_type }}</li>
+                    <li><strong>CWE:</strong> {{ analysis.cwe_id }}</li>
+                    <li><strong>Attack Complexity:</strong> {{ "Low" if analysis.confidence > 0.7 else "Medium" }}</li>
+                </ul>
+            </div>
+
+            <!-- Business Impact -->
+            <div class="metric-card">
+                <h3>Business Impact</h3>
+                <ul class="details-list">
+                    <li><strong>Financial:</strong> {{ business_impact.financial.display }}</li>
+                    <li><strong>Operational:</strong> {{ business_impact.operational.severity }}</li>
+                    <li><strong>Recovery Time:</strong> {{ business_impact.operational.recovery_time }}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+<!-- Scope of Assessment Section -->
+<section class="page-section">
+    <h1 class="text-4xl font-bold text-indigo-600 mb-8">Scope of Assessment</h1>
+
+    <!-- Environment Overview -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Environment Overview</h2>
+
+        <!-- Environment Details Table -->
+        <table class="min-w-full bg-white border border-gray-200 mb-8">
+            <thead>
+                <tr class="bg-gray-700">
+                    <th colspan="4" class="px-4 py-3 text-left text-lg font-semibold text-gray-700 border-b">
+                        Target Details
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700 w-1/4">Target Type:</td>
+                    <td class="px-4 py-3 border-b text-gray-800">{{ environment_info.scope.target_type }}</td>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700 w-1/4">Environment:</td>
+                    <td class="px-4 py-3 border-b text-gray-800">{{ environment_info.scope.environment_type }}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Total Components:</td>
+                    <td class="px-4 py-3 border-b text-gray-800">{{ environment_info.scope.components_analyzed }}</td>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Assessment Type:</td>
+                    <td class="px-4 py-3 border-b text-gray-800">{{ environment_info.scope.assessment_type }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Operating Systems & Languages Table -->
+        <table class="min-w-full bg-white border border-gray-200 mb-8">
+            <thead>
+                <tr class="bg-gray-700">
+                    <th colspan="2" class="px-4 py-3 text-left text-lg font-semibold text-gray-700 border-b">
+                        Operating Systems & Languages
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if environment_info.operating_systems %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700 w-1/4">Operating Systems:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for os in environment_info.operating_systems %}
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-2">{{ os }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.programming_languages %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Programming Languages:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for lang in environment_info.programming_languages %}
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm mr-2">{{ lang }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.frameworks_and_libraries %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Frameworks & Libraries:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for framework in environment_info.frameworks_and_libraries %}
+                            <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm mr-2">{{ framework }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Infrastructure & Network Table -->
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead>
+                <tr class="bg-gray-700">
+                    <th colspan="2" class="px-4 py-3 text-left text-lg font-semibold text-gray-700 border-b">
+                        Infrastructure & Network
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if environment_info.databases %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700 w-1/4">Databases:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for db in environment_info.databases %}
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm mr-2">{{ db }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.servers %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Servers:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for server in environment_info.servers %}
+                            <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm mr-2">{{ server }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.cloud_services %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Cloud Services:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for service in environment_info.cloud_services %}
+                            <span class="px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full text-sm mr-2">{{ service }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.containerization %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Containerization:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for container in environment_info.containerization %}
+                            <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-sm mr-2">{{ container }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if environment_info.network_components %}
+                <tr>
+                    <td class="px-4 py-3 border-b font-medium text-gray-700">Network Components:</td>
+                    <td class="px-4 py-3 border-b">
+                        {% for component in environment_info.network_components %}
+                            <div class="py-1">{{ component }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<style>
+    /* Additional styles for print */
+    @media print {
+        .page-section {
+            break-inside: avoid;
+            margin-bottom: 2cm;
+        }
+        
+        table {
+            break-inside: avoid;
+        }
+        
+        .bg-white {
+            background-color: white !important;
+            color: black !important;
+        }
+        
+        .border {
+            border-color: #000 !important;
+        }
+        
+        th, td {
+            padding: 8px !important;
+            border-color: #000 !important;
+        }
+        
+        /* Ensure tags remain visible in print */
+        span[class*="bg-"] {
+            border: 1px solid #000;
+            padding: 2px 6px !important;
+            margin: 2px !important;
+            border-radius: 12px !important;
+        }
+    }
+</style>
+<!-- Technical Findings -->
+{# Technical Findings Section #}
+<div class="technical-findings-section bg-zinc-800/50 p-6 rounded-lg mb-8">
+    <h2 class="text-2xl font-bold text-white mb-6">Technical Findings</h2>
+
+    {# Analysis Overview Card #}
+    <div class="bg-zinc-900/50 p-4 rounded-lg mb-6">
+        <h3 class="text-lg font-medium text-cyan-500 mb-4">Analysis Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-3 bg-zinc-800/50 rounded-lg">
+                <p class="text-gray-400 text-sm">Total Vulnerabilities</p>
+                <p class="text-white text-lg">{{ analysis.vulnerability_type.split(',')|length }}</p>
+            </div>
+            <div class="p-3 bg-zinc-800/50 rounded-lg">
+                <p class="text-gray-400 text-sm">Severity</p>
+                <p class="text-lg {{ 'text-red-500' if analysis.severity == 'Critical' else 'text-orange-500' if analysis.severity == 'High' else 'text-yellow-500' }}">
+                    {{ analysis.severity }}
+                </p>
+            </div>
+            <div class="p-3 bg-zinc-800/50 rounded-lg">
+                <p class="text-gray-400 text-sm">Confidence</p>
+                <p class="text-white text-lg">{{ (analysis.confidence * 100)|round|int }}%</p>
+            </div>
+        </div>
+    </div>
+
+    {# Key Findings Section #}
+    <div class="mb-6">
+        <h3 class="text-lg font-medium text-cyan-500 mb-4">Key Findings</h3>
+        <div class="bg-zinc-900/50 p-4 rounded-lg">
+            <div class="mb-4">
+                <h4 class="text-sm font-medium text-cyan-400 mb-2">Content Analysis</h4>
+                <pre class="text-sm text-gray-300 whitespace-pre-wrap bg-zinc-800/50 p-3 rounded">
+                    {%- if analysis.extracted_text -%}
+                        {{ analysis.extracted_text.split('\n')[:10]|join('\n') }}
+                        {%- if analysis.extracted_text.split('\n')|length > 10 %}
+                            [Content truncated - see full analysis for details]
+                        {%- endif -%}
+                    {%- endif -%}
+                </pre>
+            </div>
+
+            {# Vulnerabilities #}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h4 class="text-sm font-medium text-cyan-400 mb-2">Detected Vulnerabilities</h4>
+                    <ul class="list-disc list-inside text-gray-300">
+                        {% for vuln in analysis.vulnerability_type.split(',') %}
+                        <li class="mb-1">{{ vuln|trim }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-cyan-400 mb-2">CWE References</h4>
+                    <p class="text-gray-300">{{ analysis.cwe_id }}</p>
+                </div>
+            </div>
+
+            {# Evidence #}
+            <div class="mb-4">
+                <h4 class="text-sm font-medium text-cyan-400 mb-2">Supporting Evidence</h4>
+                <div class="space-y-2">
+                    {% for item in analysis.evidence[:3] if analysis.evidence %}
+                    <div class="bg-zinc-800/50 p-3 rounded">
+                        <p class="text-gray-300">{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                    {% if analysis.evidence and analysis.evidence|length > 3 %}
+                    <p class="text-gray-400 text-sm italic">+ {{ analysis.evidence|length - 3 }} more findings</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Impact Assessment #}
+    <div>
+        <h3 class="text-lg font-medium text-cyan-500 mb-4">Impact Assessment</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-zinc-900/50 p-4 rounded-lg">
+                <h4 class="text-sm font-medium text-cyan-400 mb-2">Technical Impact</h4>
+                <p class="text-gray-300">{{ analysis.impact }}</p>
+            </div>
+            <div class="bg-zinc-900/50 p-4 rounded-lg">
+                <h4 class="text-sm font-medium text-cyan-400 mb-2">Affected Components</h4>
+                <ul class="list-disc list-inside text-gray-300">
+                    {% for component in analysis.affected_components[:3] if analysis.affected_components %}
+                    <li>{{ component }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="bg-zinc-900/50 p-4 rounded-lg">
+                <h4 class="text-sm font-medium text-cyan-400 mb-2">Risk Level</h4>
+                <p class="text-lg {{ 'text-red-500' if analysis.severity == 'Critical' else 'text-orange-500' if analysis.severity == 'High' else 'text-yellow-500' }}">
+                    {{ analysis.severity }}
+                </p>
+                <p class="text-gray-300 text-sm">CVSS Score: {{ analysis.cvss_score }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+    <div class="metrics-grid">
+        {% for evidence in analysis.evidence %}
+        <div class="metric-card">
+            <h4>{{ evidence.type }}</h4>
+            <p>{{ evidence.description }}</p>
+            <div class="status-badge {{ evidence.severity|lower }}">
+                {{ evidence.severity }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+<!-- Add this section after the Technical Analysis section in professional_report.html -->
+    <!-- Enhanced Technical Findings -->
+     <div>
+    <section class="page">
+        <h2>Detailed Technical Findings</h2>
+
+        <!-- CVSS Score Breakdown -->
+        <div class="card">
+            <h3>CVSS 3.1 Metrics</h3>
+            <div class="cvss-grid">
+                <div class="cvss-score">
+                    <div class="score-circle severity-{{ analysis.severity|lower }}">
+                        {{ "%.1f"|format(analysis.cvss_score) }}
+                    </div>
+                    <p class="score-label">Base Score</p>
+                </div>
+                
+                <div class="metrics-breakdown">
+                    <table class="metrics-table">
+                        <tr>
+                            <th colspan="2">Base Metrics</th>
+                            <th colspan="2">Temporal Metrics</th>
+                        </tr>
+                        <tr>
+                            <td class="label">Attack Vector:</td>
+                            <td>Network (N)</td>
+                            <td class="label">Exploit Code:</td>
+                            <td>Functional</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Attack Complexity:</td>
+                            <td>Low (L)</td>
+                            <td class="label">Remediation Level:</td>
+                            <td>Workaround</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Privileges Required:</td>
+                            <td>None (N)</td>
+                            <td class="label">Report Confidence:</td>
+                            <td>Confirmed</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attack Vector Analysis -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6">Attack Vector Analysis</h2>
+            
+            <div class="relative pl-8 space-y-6">
+                <div class="absolute left-0 top-0 bottom-0 w-px bg-zinc-800"></div>
+        
+                <div class="relative">
+                    <div class="absolute -left-4 w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                    <div class="p-4 bg-red-500/5 border border-red-500/20 rounded-lg">
+                        <h4 class="font-medium text-red-500">1. Initial Access</h4>
+                        <p>{{ analysis.vulnerability_type }} exploitation</p>
+                        <div class="chain-details mt-2">
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">Entry Point</span>
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">Network-Based</span>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="relative">
+                    <div class="absolute -left-4 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                    <div class="p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+                        <h4 class="font-medium text-orange-500">2. Execution</h4>
+                        <p>Payload deployment and execution</p>
+                        <div class="chain-details mt-2">
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">Code Execution</span>
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">System Level</span>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="relative">
+                    <div class="absolute -left-4 w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div class="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-lg">
+                        <h4 class="font-medium text-yellow-500">3. Impact</h4>
+                        <p>{{ analysis.impact }}</p>
+                        <div class="chain-details mt-2">
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">Data Access</span>
+                            <span class="px-2 py-1 bg-zinc-800/50 rounded text-xs">System Compromise</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Vulnerability Details -->
+        <div class="card">
+            <h3>Detailed Technical Analysis</h3>
+            <div class="details-grid">
+                <div class="details-section">
+                    <h4>Vulnerability Characteristics</h4>
+                    <table class="details-table">
+                        <tr>
+                            <td class="label">CWE Category:</td>
+                            <td>{{ analysis.cwe_id }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Attack Pattern:</td>
+                            <td>{{ analysis.vulnerability_type }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Detection Confidence:</td>
+                            <td>{{ "%.0f"|format(analysis.confidence * 100) }}%</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="details-section">
+                    <h4>Affected Components</h4>
+                    <ul class="component-list">
+                        {% for component in analysis.affected_components %}
+                        <li class="component-item">
+                            <span class="component-name">{{ component }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Add this section after your existing vulnerability analysis -->
+<!-- MITRE ATT&CK Analysis Section -->
+<section class="mitre-section">
+    <h2>MITRE ATT&CK Analysis</h2>
+    
+    <!-- Overview Section -->
+    <div class="analysis-overview">
+        <h3>Attack Chain Overview</h3>
+        <div class="overview-grid">
+            <div class="overview-card">
+                <h4>Vulnerability Context</h4>
+                <ul>
+                    <li>Type: {{ analysis.vulnerability_type }}</li>
+                    <li>Severity: {{ analysis.severity }}</li>
+                    <li>CWE ID: {{ analysis.cwe_id }}</li>
+                </ul>
+            </div>
+            
+            <div class="overview-card">
+                <h4>Analysis Summary</h4>
+                <ul>
+                    <li>Detection Confidence: {{ mitre_attack.tactics[0].detection_confidence * 100 }}%</li>
+                    <li>Overall Impact: {{ mitre_attack.tactics[0].impact }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tactics and Techniques -->
+    <div class="tactics-section">
+        <h3>Identified Tactics & Techniques</h3>
+        {% for tactic in mitre_attack.tactics %}
+        <div class="tactic-card">
+            <h4>{{ tactic.tactic_id }} - {{ tactic.tactic_name }}</h4>
+            <div class="tactic-meta">
+                <span class="tag {{ tactic.likelihood|lower }}">{{ tactic.likelihood }} Likelihood</span>
+                <span class="tag {{ tactic.impact|lower }}">{{ tactic.impact }} Impact</span>
+            </div>
+            <p>{{ tactic.description }}</p>
+
+            {% for technique in tactic.techniques %}
+            <div class="technique-card">
+                <h5>{{ technique.technique_id }} - {{ technique.technique_name }}</h5>
+                <p>{{ technique.description }}</p>
+
+                <div class="technique-details">
+                    <div class="detail-section">
+                        <h6>Detection Strategy</h6>
+                        <ul>
+                            <li>Method: {{ technique.detection.method }}</li>
+                            <li>Effectiveness: {{ technique.detection.effectiveness }}</li>
+                            <li>Data Sources:</li>
+                            <ul>
+                                {% for source in technique.detection.data_sources %}
+                                <li>{{ source }}</li>
+                                {% endfor %}
+                            </ul>
+                        </ul>
+                    </div>
+
+                    <div class="detail-section">
+                        <h6>Mitigation Strategy</h6>
+                        <ul>
+                            <li>Strategy: {{ technique.mitigation.strategy }}</li>
+                            <li>Implementation Time: {{ technique.mitigation.implementation_time }}</li>
+                            <li>Controls:</li>
+                            <ul>
+                                {% for control in technique.mitigation.controls %}
+                                <li>{{ control }}</li>
+                                {% endfor %}
+                            </ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Kill Chain Analysis -->
+    <div class="kill-chain-section">
+        <h3>Attack Kill Chain Analysis</h3>
+        {% for phase in mitre_attack.kill_chain_phases %}
+        <div class="phase-card">
+            <h4>{{ phase.phase_name }}</h4>
+            <p>{{ phase.description }}</p>
+            
+            <div class="phase-details">
+                <div class="detail-section">
+                    <h5>Attack Details</h5>
+                    <ul>
+                        <li>Duration: {{ phase.duration }}</li>
+                        <li>Techniques Used:</li>
+                        <ul>
+                            {% for technique in phase.techniques_used %}
+                            <li>{{ technique }}</li>
+                            {% endfor %}
+                        </ul>
+                    </ul>
+                </div>
+
+                <div class="detail-section">
+                    <h5>Detection Opportunities</h5>
+                    <ul>
+                        {% for opportunity in phase.detection_opportunities %}
+                        <li>{{ opportunity }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations-section">
+        <h3>Security Recommendations</h3>
+        {% for rec in mitre_attack.recommendations %}
+        <div class="recommendation-card">
+            <h4>{{ rec.priority }} Priority: {{ rec.description }}</h4>
+            <div class="recommendation-details">
+                <ul>
+                    <li>Implementation: {{ rec.implementation }}</li>
+                    <li>Timeline: {{ rec.timeframe }}</li>
+                    <li>Cost: {{ rec.cost_estimate }}</li>
+                    <li>Expected Outcomes:</li>
+                    <ul>
+                        {% for outcome in rec.expected_outcomes %}
+                        <li>{{ outcome }}</li>
+                        {% endfor %}
+                    </ul>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+        <!-- Technical Evidence -->
+        <div class="card">
+            <h3>Vulnerability Evidence</h3>
+            <div class="evidence-container">
+                <div class="evidence-header">
+                    <span class="evidence-title">Source Code Analysis</span>
+                    <span class="evidence-meta">Detected Pattern</span>
+                </div>
+                <pre class="code-block highlighted">{{ analysis.extracted_text }}</pre>
+                <div class="evidence-footer">
+                    <span class="tag">Detection Method: Pattern Analysis</span>
+                    <span class="tag">Confidence: {{ "%.0f"|format(analysis.confidence * 100) }}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Matrix -->
+        <div class="card">
+            <h3>Impact Analysis Matrix</h3>
+            <table class="impact-matrix">
+                <tr>
+                    <th>Impact Category</th>
+                    <th>Severity</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Confidentiality</td>
+                    <td class="severity-critical">High</td>
+                    <td>Unauthorized access to sensitive data</td>
+                </tr>
+                <tr>
+                    <td>Integrity</td>
+                    <td class="severity-high">Medium</td>
+                    <td>Potential data modification</td>
+                </tr>
+                <tr>
+                    <td>Availability</td>
+                    <td class="severity-medium">Medium</td>
+                    <td>Service disruption possible</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Risk Metrics -->
+        <div class="card">
+            <h3>Risk Metrics Visualization</h3>
+            <div class="risk-metrics-grid">
+                <div class="metric-box severity-critical">
+                    <div class="metric-value">{{ "%.1f"|format(analysis.cvss_score) }}</div>
+                    <div class="metric-label">CVSS Score</div>
+                </div>
+                <div class="metric-box severity-high">
+                    <div class="metric-value">{{ analysis.severity }}</div>
+                    <div class="metric-label">Severity</div>
+                </div>
+                <div class="metric-box severity-medium">
+                    <div class="metric-value">{{ "%.0f"|format(analysis.confidence * 100) }}%</div>
+                    <div class="metric-label">Confidence</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value">{{ risk_metrics.critical_count }}</div>
+                    <div class="metric-label">Critical Findings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<!-- Remediation Plan -->
+<section class="section">
+    <h2 class="text-2xl font-bold mb-6">Remediation Plan</h2>
+    
+    <div class="space-y-6">
+        <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
+            <h3 class="text-xl font-semibold text-red-500 mb-4">Immediate Actions (24-48h)</h3>
+            <div class="space-y-4">
+                {% for rec in analysis.recommendations[:2] %}
+                <div class="flex items-start gap-3">
+                    <div class="mt-1">
+                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-200">{{ rec }}</p>
+                        <p class="text-sm text-gray-400">Implementation Timeline: 24-48 hours</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="mt-4 pt-4 border-t border-red-500/20">
+                <p><span class="text-gray-400">Resources:</span> <span class="font-medium">{{ resources.immediate.staff }} FTE</span></p>
+                <p><span class="text-gray-400">Cost:</span> <span class="font-medium">{{ resources.immediate.cost }}</span></p>
+            </div>
+        </div>
+
+        {# Similar blocks for Short-term and Long-term actions... #}
+    </div>
+</section>
+        <!-- Short-term Actions -->
+        <div class="timeline-item">
+            <h3>Short-term Actions (7 days)</h3>
+            <ul class="details-list">
+                {% for rec in analysis.recommendations[2:4] %}
+                <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Resources:</strong> {{ resources.shortterm.staff }} FTE</p>
+            <p><strong>Cost:</strong> {{ resources.shortterm.cost }}</p>
+        </div>
+
+        <!-- Long-term Actions -->
+        <div class="timeline-item">
+            <h3>Long-term Actions (30 days)</h3>
+            <ul class="details-list">
+                {% for rec in analysis.recommendations[4:] %}
+                <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Resources:</strong> {{ resources.longterm.staff }} FTE</p>
+            <p><strong>Cost:</strong> {{ resources.longterm.cost }}</p>
+        </div>
+    </div>
+</section>
+<!-- Compliance Status -->
+<section class="page-break">
+    <h2>Compliance Impact</h2>
+    <div class="metrics-grid">
+        {% for framework_id, framework in compliance.frameworks.items() %}
+        <div class="metric-card bg-[#1a1a1a] p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-white mb-3">{{ framework.name }}</h3>
+            
+            <span class="status-badge px-2 py-1 rounded-full text-xs inline-flex 
+              {% if framework.status == 'Non-Compliant' %}
+                bg-red-500/10 text-red-500
+              {% elif framework.status == 'Partial' %}
+                bg-yellow-500/10 text-yellow-500
+              {% else %}
+                bg-green-500/10 text-green-500
+              {% endif %}">
+              {{ framework.status }}
+            </span>
+          
+            <div class="details-list space-y-3 mt-4">
+              <p class="flex justify-between items-center">
+                <span class="text-gray-400">Compliance Score:</span>
+                <span class="text-cyan-500">{{ framework.score }}%</span>
+              </p>
+          
+              <p class="flex justify-between items-center">
+                <span class="text-gray-400">Gap:</span>
+                <span class="text-cyan-500">{{ framework.gap }}%</span>
+              </p>
+          
+              <p class="flex justify-between items-center">
+                <span class="text-gray-400">Priority:</span>
+                <span class="text-cyan-500">{{ framework.priority }}</span>
+              </p>
+          
+              <div class="compliance-status">
+                <span class="status-badge status-{{ framework.status|lower }}">{{ framework.status }}</span>
+                <span>{{ framework.score }}%</span>
+              </div>
+          
+              <div class="compliance-progress mb-6">
+                <div class="compliance-bar-container h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div class="compliance-bar status-{{ framework.status|lower }} h-full" 
+                       style="width: {{ framework.score }}%">
+                  </div>
+                </div>
+              </div>
+          
+              {# Implementation Status - Single Display #}
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-[#141414] p-4 rounded text-center">
+                  <div class="text-sm text-gray-400 mb-2">Implemented</div>
+                  <div class="font-bold text-green-500 mb-3">{{ framework.controls.implemented }}%</div>
+                  <div class="implementation-bar-container h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="implementation-bar implemented-bar h-full bg-green-500" 
+                         style="width: {{ framework.controls.implemented }}%">
+                    </div>
+                  </div>
+                </div>
+          
+                <div class="bg-[#141414] p-4 rounded text-center">
+                  <div class="text-sm text-gray-400 mb-2">Partial</div>
+                  <div class="font-bold text-yellow-500 mb-3">{{ framework.controls.partial }}%</div>
+                  <div class="implementation-bar-container h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="implementation-bar partial-bar h-full bg-yellow-500" 
+                         style="width: {{ framework.controls.partial }}%">
+                    </div>
+                  </div>
+                </div>
+          
+                <div class="bg-[#141414] p-4 rounded text-center">
+                  <div class="text-sm text-gray-400 mb-2">Missing</div>
+                  <div class="font-bold text-red-500 mb-3">{{ framework.controls.missing }}%</div>
+                  <div class="implementation-bar-container h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="implementation-bar missing-bar h-full bg-red-500" 
+                         style="width: {{ framework.controls.missing }}%">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+    </div>
+</section>
+
+<!-- Risk Analysis -->
+<section class="page-break">
+    <h2>Risk Analysis Metrics</h2>
+    <div class="metrics-grid">
+        <!-- Risk Trajectory -->
+        <div class="metric-card">
+            <h3>Risk Trajectory</h3>
+            <div class="details-list">
+                <p><strong>Initial Risk:</strong> {{ "%.1f"|format(risk_metrics.base_score) }}/10</p>
+                <p><strong>Target Risk:</strong> 3.0/10</p>
+                <p><strong>Risk Reduction:</strong> 
+                    {{ "%.0f"|format((risk_metrics.base_score - 3.0) / risk_metrics.base_score * 100) }}%
+                </p>
+                <p><strong>Trend:</strong> {{ risk_metrics.trend }}</p>
+                <p><strong>Change:</strong> {{ risk_metrics.trend_percentage }}</p>
+            </div>
+        </div>
+
+        <!-- Risk Distribution -->
+        <div class="metric-card">
+            <h3>Risk Distribution</h3>
+            <div class="details-list">
+                {% for level, count in risk_metrics.risk_counts.items() %}
+                <div class="risk-level">
+                    <span class="risk-label">{{ level|title }}</span>
+                    <span class="risk-count">{{ count }}</span>
+                    <div class="risk-bar {{ level }}" style="width: {{ (count / risk_metrics.risk_counts.values()|sum * 100)|round }}%"></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Security Posture -->
+        <div class="metric-card">
+            <h3>Security Posture</h3>
+            <div class="details-list">
+                <p><strong>Current Status:</strong> 
+                    {{ "Insufficient" if analysis.severity in ['Critical', 'High'] else "Adequate" }}
+                </p>
+                <p><strong>Required Controls:</strong>
+                    {{ "Advanced" if analysis.severity == 'Critical' else "Enhanced" }}
+                </p>
+                <p><strong>Control Gap:</strong>
+                    {{ "Critical" if analysis.severity == 'Critical' else "Moderate" }}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Authentication Section -->
+<section class="page-break">
+    <h2>Report Authentication & Validation</h2>
+    <div class="auth-section">
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Report Details</h3>
+                <div class="details-list">
+                    <p><strong>Assessment Conducted By:</strong> Enterprise Security Assessment Team</p>
+                    <p><strong>Report Generated By:</strong> {{ current_user.username }}</p>
+                    <p><strong>Generation Date:</strong> {{ now.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>Classification:</strong> CONFIDENTIAL - Executive Distribution Only</p>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Digital Signature</h3>
+                <div class="signature-block">
+                    <p><strong>Document Reference:</strong> VAPT-{{ session.id[:8] }}</p>
+                    <p><strong>Hash:</strong> {{ session.id }}</p>
+                    <p><strong>Timestamp:</strong> {{ now.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+                    <div class="signature-note">
+                        This report is digitally signed and timestamped. Verify authenticity using the document reference and hash.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+
+<script>
+// Add any necessary JavaScript for charts or interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize any charts or interactive elements
+});
+</script>
+</body>
+</html>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Primary colors */
+    --primary-50: #eef2ff;
+    --primary-100: #e0e7ff;
+    --primary-500: #6366f1;
+    --primary-600: #4f46e5;
+    --primary-700: #4338ca;
+
+    /* Neutral colors */
+    --neutral-50: #f9fafb;
+    --neutral-100: #f3f4f6;
+    --neutral-200: #e5e7eb;
+    --neutral-300: #d1d5db;
+    --neutral-700: #374151;
+    --neutral-800: #1f2937;
+    --neutral-900: #111827;
+
+    /* Severity colors */
+    --critical-50: #fef2f2;
+    --critical-100: #fee2e2;
+    --critical-500: #ef4444;
+    --critical-600: #dc2626;
+    --critical-700: #b91c1c;
+
+    --high-50: #fff7ed;
+    --high-100: #ffedd5;
+    --high-500: #f97316;
+    --high-600: #ea580c;
+    --high-700: #c2410c;
+
+    --medium-50: #fefce8;
+    --medium-100: #fef9c3;
+    --medium-500: #eab308;
+    --medium-600: #ca8a04;
+    --medium-700: #a16207;
+
+    --low-50: #f0fdf4;
+    --low-100: #dcfce7;
+    --low-500: #22c55e;
+    --low-600: #16a34a;
+    --low-700: #15803d;
+}
+
+@page { 
+    size: letter;
+    margin: 2.5cm;
+    @top-center { 
+        content: "Security Assessment Report";
+        font-family: 'Inter', sans-serif;
+        color: var(--neutral-700);
+    }
+    @bottom-center { 
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: 'Inter', sans-serif;
+        color: var(--neutral-700);
+    }
+}
+
+body { 
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--neutral-900);
+    background-color: var(--neutral-50);
+}
+h1, h2, h3, h4, h5, h6 {
+    color: var(--neutral-900);
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-700);
+}
+
+h2 {
+    font-size: 2rem;
+    margin: 2rem 0 1.5rem;
+    color: var(--primary-600);
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--neutral-800);
+}
+/* Modern Professional Table Styles */
+.table-container {
+  position: relative;
+  margin: 2rem 0;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* Base Table Styles */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Header Styles */
+thead {
+  background: linear-gradient(
+    to right,
+    var(--gray-800),
+    var(--gray-900)
+  );
+}
+
+th {
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid var(--gray-700);
+  position: relative;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Row Styles */
+tr {
+  transition: all 0.2s ease;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(243, 244, 246, 0.3);
+}
+
+tr:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  transform: translateX(4px);
+}
+
+/* Cell Styles */
+td {
+  padding: 1.25rem 1.5rem;
+  color: var(--gray-700);
+  border-bottom: 1px solid var(--gray-200);
+  transition: all 0.2s ease;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status Cell Styles */
+td.status-cell {
+  white-space: nowrap;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status-critical {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+}
+
+.status-high {
+  background: rgba(245, 158, 11, 0.1);
+  color: rgb(245, 158, 11);
+}
+
+.status-medium {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(59, 130, 246);
+}
+
+.status-low {
+  background: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+}
+
+/* Actions Cell Styles */
+td.actions-cell {
+  text-align: right;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid var(--gray-200);
+  background: white;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+  color: var(--gray-900);
+}
+
+.action-button-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.action-button-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: white;
+}
+
+/* Sortable Headers */
+th.sortable {
+  cursor: pointer;
+  padding-right: 2rem;
+  position: relative;
+}
+
+th.sortable::after {
+  content: '↕';
+  position: absolute;
+  right: 0.75rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+th.sortable:hover::after {
+  opacity: 1;
+}
+
+th.sorted-asc::after {
+  content: '↑';
+  opacity: 1;
+}
+
+th.sorted-desc::after {
+  content: '↓';
+  opacity: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: 0;
+    box-shadow: none;
+    margin: 1rem -1rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  th, td {
+    padding: 0.75rem 1rem;
+  }
+
+  .action-button {
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* Table Footer */
+tfoot {
+  background: var(--gray-50);
+  border-top: 2px solid var(--gray-200);
+}
+
+tfoot td {
+  padding: 1rem 1.5rem;
+  font-weight: 500;
+  color: var(--gray-900);
+}
+
+/* Selection Styles */
+tr.selected {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+tr.selected:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Empty State */
+.table-empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: var(--gray-500);
+}
+
+.table-empty-state-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Loading State */
+.table-loading {
+  position: relative;
+  min-height: 200px;
+}
+
+.table-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+/* Scrollable Table */
+.table-scrollable {
+  max-height: 600px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-400) transparent;
+}
+
+.table-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--gray-400);
+  border-radius: 3px;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .table-container {
+    background: var(--gray-800);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  thead {
+    background: linear-gradient(
+      to right,
+      var(--gray-900),
+      var(--gray-800)
+    );
+  }
+
+  td {
+    color: var(--gray-300);
+    border-bottom-color: var(--gray-700);
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba(31, 41, 55, 0.3);
+  }
+
+  tr:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .action-button {
+    background: var(--gray-700);
+    border-color: var(--gray-600);
+    color: var(--gray-300);
+  }
+
+  .action-button:hover {
+    background: var(--gray-600);
+    border-color: var(--gray-500);
+    color: white;
+  }
+
+  tfoot {
+    background: var(--gray-900);
+    border-top-color: var(--gray-700);
+  }
+
+  tfoot td {
+    color: var(--gray-300);
+  }
+}
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-600);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-100);
+}
+.risk-distribution {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--neutral-200);
+}
+
+.risk-bar-container {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    gap: 1rem;
+}
+
+.risk-label {
+    min-width: 100px;
+    font-weight: 500;
+    color: var(--neutral-600);
+}
+
+.risk-bar-wrapper {
+    flex-grow: 1;
+    background: var(--neutral-100);
+    height: 1.5rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.risk-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.risk-value {
+    min-width: 60px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--neutral-700);
+}
+
+/* Risk bar colors */
+.risk-critical .risk-bar {
+    background: linear-gradient(45deg, var(--critical-500), var(--critical-600));
+}
+
+.risk-high .risk-bar {
+    background: linear-gradient(45deg, var(--high-500), var(--high-600));
+}
+
+.risk-medium .risk-bar {
+    background: linear-gradient(45deg, var(--medium-500), var(--medium-600));
+}
+
+.risk-low .risk-bar {
+    background: linear-gradient(45deg, var(--low-500), var(--low-600));
+}
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.metric-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--neutral-200);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-600);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: var(--neutral-700);
+    font-weight: 500;
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.trend-up {
+    color: var(--critical-600);
+}
+
+.trend-down {
+    color: var(--low-600);
+}
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-critical {
+    background-color: var(--critical-50);
+    color: var(--critical-700);
+    border: 1px solid var(--critical-100);
+}
+
+.status-high {
+    background-color: var(--high-50);
+    color: var(--high-700);
+    border: 1px solid var(--high-100);
+}
+
+.status-medium {
+    background-color: var(--medium-50);
+    color: var(--medium-700);
+    border: 1px solid var(--medium-100);
+}
+
+.status-low {
+    background-color: var(--low-50);
+    color: var(--low-700);
+    border: 1px solid var(--low-100);
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--neutral-200);
+    margin-bottom: 1.5rem;
+}
+
+.section {
+    margin-bottom: 3rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 768px) {
+    .grid-cols-2, 
+    .grid-cols-3, 
+    .grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+    }
+    
+    .risk-label {
+        min-width: 80px;
+    }
+}
+
+/* Utility classes */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.p-4 { padding: 1rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+@media print {
+    body {
+        background: white;
+    }
+    
+    .card, .metric-card {
+        break-inside: avoid;
+        border: 1px solid var(--neutral-200);
+        box-shadow: none;
+    }
+    
+    .risk-distribution {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+/* Code and technical content */
+.code-block {
+    background: var(--neutral-900);
+    color: var(--neutral-100);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid var(--neutral-800);
+}
+
+.technical-details {
+    background: var(--neutral-50);
+    border: 1px solid var(--neutral-200);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+}
+
+.evidence-block {
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin: 1rem 0;
+}
+/* Enhanced table styles */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1.5rem 0;
+    background: white;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(2, 148, 246, 0.742);
+}
+
+.data-table th {
+    background: var(--neutral-50);
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--neutral-700);
+    text-align: left;
+    border-bottom: 2px solid var(--neutral-200);
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+}
+
+.data-table tbody tr:hover {
+    background: var(--neutral-50);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+/* Progress bars and charts */
+.progress-container {
+    color: #0f172a;
+    width: 100%;
+    background: var(--neutral-100);
+    border-radius: 9999px;
+    overflow: hidden;
+    height: 0.75rem;
+    margin: 0.5rem 0;
+}
+
+.progress-bar {
+    color: #0f172a;
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+}
+
+.chart-container {
+    color: #0f172a;
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin: 2rem 0;
+}
+
+.chart-legend {
+    color: #0f172a;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--neutral-50);
+    border-radius: 0.5rem;
+}
+
+.legend-item {
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--neutral-700);
+}
+/* Timeline visualization */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--neutral-200);
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--primary-500);
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+.timeline-content {
+    background: white;
+    border: 1px solid var(--neutral-200);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-left: 1rem;
+}
+/* Animations and transitions */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+/* Report specific components */
+.report-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.report-logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    background: var(--primary-600);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.report-meta-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--neutral-200);
+}
+
+.report-meta-label {
+    font-weight: 500;
+    color: var(--neutral-600);
+}
+
+.report-meta-value {
+    color: var(--neutral-900);
+}
+
+.signature-block {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--neutral-200);
+}
+/* Framework compliance progress bars */
+.compliance-metrics {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--neutral-200);
+    margin-bottom: 1.5rem;
+}
+
+.compliance-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.compliance-progress {
+    margin: 2rem 0;
+}
+
+/* Main compliance progress bar */
+.compliance-bar-container {
+    width: 100%;
+    height: 1rem;
+    background: var(--neutral-100);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+.compliance-bar {
+    height: 100%;
+    border-radius: 0.5rem;
+    transition: width 0.3s ease;
+}
+
+/* Implementation status bars */
+.implementation-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.implementation-item {
+    background: var(--neutral-50);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.implementation-bar-container {
+    width: 100%;
+    height: 0.5rem;
+    background: var(--neutral-100);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.implementation-bar {
+    height: 100%;
+    border-radius: 0.25rem;
+    transition: width 0.3s ease;
+}
+
+/* Status-specific colors */
+.status-compliant .compliance-bar {
+    background: linear-gradient(90deg, var(--low-500), var(--low-600));
+}
+
+.status-partial .compliance-bar {
+    background: linear-gradient(90deg, var(--medium-500), var(--medium-600));
+}
+
+.status-noncompliant .compliance-bar {
+    background: linear-gradient(90deg, var(--critical-500), var(--critical-600));
+}
+
+/* Implementation status colors */
+.implemented-bar {
+    background: linear-gradient(90deg, var(--low-500), var(--low-600));
+}
+
+.partial-bar {
+    background: linear-gradient(90deg, var(--medium-500), var(--medium-600));
+}
+
+.missing-bar {
+    background: linear-gradient(90deg, var(--critical-500), var(--critical-600));
+}
+/* MITRE ATT&CK Section Styling */
+.mitre-section {
+    margin: 2em 0;
+    page-break-before: always;
+}
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    margin: 1em 0;
+}
+
+.overview-card {
+    background: #f8f9fa;
+    padding: 1em;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.tactic-card {
+    background: white;
+    padding: 1.5em;
+    margin: 1em 0;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.tactic-meta {
+    margin: 0.5em 0;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-right: 0.5em;
+}
+
+.tag.high {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.tag.medium {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.tag.low {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.technique-card {
+    background: #f8f9fa;
+    padding: 1em;
+    margin: 1em 0;
+    border-left: 3px solid #0ea5e9;
+}
+
+.technique-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.detail-section {
+    background: white;
+    padding: 1em;
+    border-radius: 4px;
+}
+
+.phase-card {
+    background: white;
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.phase-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.recommendation-card {
+    background: white;
+    padding: 1em;
+    margin: 1em 0;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+/* Print-specific styles */
+@media print {
+    .mitre-section {
+        page-break-before: always;
+    }
+    
+    .tactic-card,
+    .phase-card,
+    .recommendation-card {
+        page-break-inside: avoid;
+    }
+    
+    .tag {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+</style>

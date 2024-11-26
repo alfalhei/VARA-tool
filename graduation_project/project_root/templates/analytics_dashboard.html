@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen bg-black">
+    {# Top Navigation Bar #}
+    <nav class="bg-zinc-900 border-b border-zinc-800">
+        <div class="max-w-screen-2xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                {# Left Navigation #}
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('dashboard') }}" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back to VARA
+                    </a>
+                    
+                    <div class="h-6 w-px bg-zinc-800"></div>
+                    
+                    <div class="flex items-center gap-2">
+                        <svg class="w-8 h-8 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <span class="text-xl font-bold text-white">VARA Analytics</span>
+                    </div>
+                </div>
+
+                {# Right Navigation #}
+                <div class="flex items-center gap-4">
+                    {# Search Bar #}
+                    <div class="relative">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            placeholder="Search analytics..." 
+                            class="pl-10 pr-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-gray-300 focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    {# User Profile #}
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                            <span class="text-cyan-500 font-medium">{{ current_user.username[0]|upper }}</span>
+                        </div>
+                        <div>
+                            <p class="text-white">{{ current_user.username }}</p>
+                            <p class="text-sm text-gray-400">Security Analyst</p>
+                        </div>
+                    </div>
+
+                    {# Logout Button #}
+                    <a href="{{ url_for('logout') }}" class="flex items-center gap-2 text-red-500 hover:text-red-400">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {# Main Content Container #}
+    <div class="max-w-screen-2xl mx-auto px-6 py-8">
+        {# Company Selection and Quick Actions #}
+        <div class="flex justify-between items-center mb-8">
+            {# Company Selector #}
+            <div class="relative" x-data="{ open: false }">
+                <button 
+                    @click="open = !open"
+                    class="flex items-center space-x-2 px-4 py-2 bg-zinc-800 rounded-lg border border-zinc-700 text-white hover:bg-zinc-700 transition-colors"
+                >
+                    <svg class="w-4 h-4 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span id="selectedCompany">TechCorp Solutions</span>
+                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+
+                {# Dropdown Menu #}
+                <div 
+                    x-show="open" 
+                    @click.away="open = false"
+                    class="absolute z-10 mt-2 w-64 rounded-lg bg-zinc-800 border border-zinc-700 shadow-lg"
+                >
+                    {% for company in companies %}
+                    <button 
+                        class="w-full px-4 py-2 text-left text-gray-300 hover:bg-zinc-700 first:rounded-t-lg last:rounded-b-lg"
+                        onclick="selectCompany('{{ company.name }}')"
+                    >
+                        {{ company.name }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Quick Actions #}
+            <div class="flex space-x-4">
+                <button class="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Generate Report
+                </button>
+                <button class="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 transition-colors">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Export Data
+                </button>
+            </div>
+        </div>
+
+        {# Metrics Cards Grid #}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {# Security Score Card #}
+            <div class="bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700 rounded-lg p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-gray-400">Security Score</p>
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-3xl font-bold text-white">85.2</h3>
+                            <span class="text-sm text-green-500 flex items-center">
+                                <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                    <polyline points="17 6 23 6 23 12"/>
+                                </svg>
+                                +2.4
+                            </span>
+                        </div>
+                    </div>
+                    <svg class="w-8 h-8 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-cyan-500 rounded-full" style="width: 85.2%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Previous: 82.8</span>
+                        <span>Target: 90.0</span>
+                    </div>
+                </div>
+            </div>
+            {# Critical Vulnerabilities Card #}
+            <div class="bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700 rounded-lg p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400">Critical Vulnerabilities</p>
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-3xl font-bold text-white">7</h3>
+                            <span class="text-sm text-red-500">↑ +3</span>
+                        </div>
+                    </div>
+                    <svg class="w-8 h-8 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">4 new in last 24h</p>
+            </div>
+
+            {# Response Time Card #}
+            <div class="bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700 rounded-lg p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400">Avg. Response Time</p>
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-3xl font-bold text-white">4.2h</h3>
+                            <span class="text-sm text-green-500">↓ 15%</span>
+                        </div>
+                    </div>
+                    <svg class="w-8 h-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">Target: 4h</p>
+            </div>
+
+            {# Security Events Card #}
+            <div class="bg-gradient-to-br from-zinc-900 to-zinc-800 border border-zinc-700 rounded-lg p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400">Security Events</p>
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-3xl font-bold text-white">2,847</h3>
+                            <span class="text-sm text-red-500">↑ 8%</span>
+                        </div>
+                    </div>
+                    <svg class="w-8 h-8 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">147 Critical</p>
+            </div>
+        </div>
+
+        {# Charts Grid #}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {# Vulnerability Trend Chart #}
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-white">Vulnerability Trend</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-sm text-gray-400">Critical</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                            <span class="text-sm text-gray-400">High</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <span class="text-sm text-gray-400">Medium</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative h-80 w-full">
+                    <canvas id="vulnerabilityTrendChart"></canvas>
+                </div>
+            </div>
+        
+            {# Risk Distribution Chart #}
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-white">Risk Distribution</h3>
+                    <select class="bg-zinc-800 border border-zinc-700 text-gray-300 rounded-lg px-3 py-1">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+                <div class="relative h-80 w-full">
+                    <canvas id="riskDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+        {# Security Alerts and Activity #}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {# Active Security Alerts #}
+            <div class="lg:col-span-2">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-white">Active Security Alerts</h3>
+                        <button class="text-cyan-500 hover:text-cyan-400 text-sm">View All Alerts</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        {# Critical Alert #}
+                        <div class="flex items-center justify-between p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                                        <line x1="12" y1="9" x2="12" y2="13"/>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium">Critical Security Vulnerability</p>
+                                    <p class="text-gray-400 text-sm">SQL Injection vulnerability detected in login form</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-red-500 font-medium">Critical</p>
+                                <p class="text-gray-400 text-sm">5m ago</p>
+                            </div>
+                        </div>
+
+                        {# High Alert #}
+                        <div class="flex items-center justify-between p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium">Unusual Network Activity</p>
+                                    <p class="text-gray-400 text-sm">Multiple failed login attempts detected</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-orange-500 font-medium">High</p>
+                                <p class="text-gray-400 text-sm">15m ago</p>
+                            </div>
+                        </div>
+
+                        {# Medium Alert #}
+                        <div class="flex items-center justify-between p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium">Security Update Available</p>
+                                    <p class="text-gray-400 text-sm">New security patches ready for deployment</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-yellow-500 font-medium">Medium</p>
+                                <p class="text-gray-400 text-sm">1h ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {# Recent Activity Timeline #}
+            <div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-white">Recent Activity</h3>
+                        <button class="text-cyan-500 hover:text-cyan-400 text-sm">View All</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        {# Activity Item 1 #}
+                        <div class="relative pl-6 border-l border-zinc-700">
+                            <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-cyan-500 rounded-full"></div>
+                            <div class="mb-4">
+                                <p class="text-white">Security scan completed</p>
+                                <p class="text-sm text-gray-400">Scan completed with 3 findings</p>
+                                <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
+                            </div>
+                        </div>
+
+                        {# Activity Item 2 #}
+                        <div class="relative pl-6 border-l border-zinc-700">
+                            <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-green-500 rounded-full"></div>
+                            <div class="mb-4">
+                                <p class="text-white">Firewall rules updated</p>
+                                <p class="text-sm text-gray-400">New rules applied successfully</p>
+                                <p class="text-xs text-gray-500 mt-1">15 minutes ago</p>
+                            </div>
+                        </div>
+
+                        {# Activity Item 3 #}
+                        <div class="relative pl-6 border-l border-zinc-700">
+                            <div class="absolute -left-1.5 top-1.5 w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div class="mb-4">
+                                <p class="text-white">User access review</p>
+                                <p class="text-sm text-gray-400">Monthly access review completed</p>
+                                <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# JavaScript for Charts and Interactivity #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Chart Data
+const vulnerabilityData = [
+    { month: 'Jun', critical: 4, high: 8, medium: 15 },
+    { month: 'Jul', critical: 3, high: 7, medium: 12 },
+    { month: 'Aug', critical: 5, high: 9, medium: 14 },
+    { month: 'Sep', critical: 2, high: 6, medium: 10 },
+    { month: 'Oct', critical: 6, high: 10, medium: 16 },
+    { month: 'Nov', critical: 4, high: 8, medium: 13 }
+];
+
+// Initialize Vulnerability Trend Chart
+const vulnerabilityChart = new Chart(
+    document.getElementById('vulnerabilityTrendChart').getContext('2d'),
+    {
+        type: 'line',
+        data: {
+            labels: vulnerabilityData.map(d => d.month),
+            datasets: [
+                {
+                    label: 'Critical',
+                    data: vulnerabilityData.map(d => d.critical),
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'High',
+                    data: vulnerabilityData.map(d => d.high),
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Medium',
+                    data: vulnerabilityData.map(d => d.medium),
+                    borderColor: '#eab308',
+                    backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#9ca3af'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#9ca3af'
+                    }
+                }
+            }
+        }
+    }
+);
+
+// Risk Distribution Chart
+const riskData = {
+    labels: ['Critical', 'High', 'Medium', 'Low'],
+    datasets: [{
+        data: [15, 25, 35, 25],
+        backgroundColor: [
+            '#ef4444',
+            '#f97316',
+            '#eab308',
+            '#22c55e'
+        ]
+    }]
+};
+
+// Initialize Risk Distribution Chart
+const riskChart = new Chart(
+    document.getElementById('riskDistributionChart').getContext('2d'),
+    {
+        type: 'doughnut',
+        data: riskData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#9ca3af'
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    }
+);
+
+// Company Selection Function
+function selectCompany(name) {
+    document.getElementById('selectedCompany').textContent = name;
+    // Add logic to update charts and data based on selected company
+}
+
+// Initialize when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Any additional initialization code
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Set Chart.js default options
+    Chart.defaults.color = '#9ca3af';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+    
+    // Initialize Vulnerability Trend Chart
+    const vulnerabilityTrendCtx = document.getElementById('vulnerabilityTrendChart');
+    if (vulnerabilityTrendCtx) {
+        new Chart(vulnerabilityTrendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Critical',
+                        data: [4, 3, 5, 2, 6, 4],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'High',
+                        data: [8, 7, 9, 6, 10, 8],
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Medium',
+                        data: [15, 12, 14, 10, 16, 13],
+                        borderColor: '#eab308',
+                        backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#e5e7eb',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        padding: 12
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#9ca3af',
+                            padding: 10
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#9ca3af',
+                            padding: 10
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize Risk Distribution Chart
+    const riskDistributionCtx = document.getElementById('riskDistributionChart');
+    if (riskDistributionCtx) {
+        new Chart(riskDistributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Critical', 'High', 'Medium', 'Low'],
+                datasets: [{
+                    data: [15, 25, 35, 25],
+                    backgroundColor: [
+                        '#ef4444',  // Red for Critical
+                        '#f97316',  // Orange for High
+                        '#eab308',  // Yellow for Medium
+                        '#22c55e'   // Green for Low
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#9ca3af',
+                            padding: 20,
+                            font: {
+                                size: 12
+                            },
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleColor: '#fff',
+                        bodyColor: '#e5e7eb',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${percentage}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Time range selector functionality
+    const timeRangeSelect = document.querySelector('select');
+    if (timeRangeSelect) {
+        timeRangeSelect.addEventListener('change', function(e) {
+            const days = parseInt(e.target.value);
+            console.log(`Updating charts for last ${days} days`);
+// Example of updating with real data
+            fetch('/api/vulnerability-trends')
+                .then(response => response.json())
+                .then(data => {
+                    vulnerabilityChart.data.datasets = data;
+                    vulnerabilityChart.update();
+                });
+
+        });
+    }
+});
+</script>
+
+{% endblock %}
