@@ -195,7 +195,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Contact
 
 For support or queries:
-- Email: salman.alqasmah@outlook.com
+-Email: salman.alqasmah@outlook.com
+-Email: saadalsmari0@gmail.com
 - Issue Tracker: https://github.com/salmanalqasmah/vara/issues
 
 ## 🔄 Roadmap
