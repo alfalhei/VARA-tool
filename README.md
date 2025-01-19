@@ -49,7 +49,7 @@ VARA is an advanced security analysis platform that combines machine learning an
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/vara.git
+git clone https://github.com/salmanalqasmah/VARA-tool.git
 cd vara
 ```
 
